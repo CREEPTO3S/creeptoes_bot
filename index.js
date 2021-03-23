@@ -50,7 +50,7 @@ const formatter = new Intl.NumberFormat('en-US', {
 
 const bot = new TelegramBot(TELEGRAM_TOKEN, { polling: true });
 
-bot.onText(/^[/price]/, (msg) => {
+bot.onText(/^\/price/, (msg) => {
   const tokenList = msg.text.split(' ');
   tokenList.shift();
 
