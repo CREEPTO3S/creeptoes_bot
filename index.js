@@ -45,6 +45,7 @@ job.start();
 const formatter = new Intl.NumberFormat('en-US', {
   style: 'currency',
   currency: 'USD',
+  maximumSignificantDigits: 3,
 });
 
 const bot = new TelegramBot(TELEGRAM_TOKEN, { polling: true });
