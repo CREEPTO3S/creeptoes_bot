@@ -1,0 +1,32 @@
+{
+  "name": "creeptoes_bot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CREEPTO3S/creeptoes_bot.git"
+  },
+  "author": "Muhammad Daivasmara Denaw",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/CREEPTO3S/creeptoes_bot/issues"
+  },
+  "homepage": "https://github.com/CREEPTO3S/creeptoes_bot#readme",
+  "dependencies": {
+    "bluebird": "^3.7.2",
+    "cron": "^1.8.2",
+    "dotenv": "^8.2.0",
+    "node-fetch": "^2.6.1",
+    "node-telegram-bot-api": "^0.51.0",
+    "redis": "^3.0.2"
+  },
+  "devDependencies": {
+    "eslint": "^7.22.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.22.1"
+  }
+}
