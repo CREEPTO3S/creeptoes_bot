@@ -110,12 +110,12 @@ bot.onText(/^\/chart/, (msg) => {
       return;
     }
 
-    fetch(`${COINGECKO_ENDPOINT}/coins/${reply}/market_chart?vs_currency=usd&days=7&interval=daily`)
+    fetch(`${COINGECKO_ENDPOINT}/coins/${reply}/market_chart?vs_currency=usd&days=30&interval=daily`)
       .then((res) => res.json())
       .then(async (res) => {
         if (!res.prices) return;
 
-        const labels = res.prices.map((price) => new Date(price[0]).toLocaleString().split(',')[0]);
+        const labels = res.prices.map((price) => new Date(price[0]).toLocaleString().split(',')[0].split('/').slice(0, 2).reverse().join('/'));
         const data = res.prices.map((price) => price[1]);
         const lineChart = new ChartJSImage().chart({
           type: 'line',
@@ -132,9 +132,17 @@ bot.onText(/^\/chart/, (msg) => {
           options: {
             title: {
               display: true,
-              text: `${firstToken.toUpperCase()} - 7 Days Chart`,
+              text: `${firstToken.toUpperCase()} - 30 Days Chart`,
             },
             scales: {
+              xAxes: [
+                {
+                  scaleLabel: {
+                    display: true,
+                    labelString: 'Date (dd/mm)',
+                  },
+                },
+              ],
               yAxes: [
                 {
                   ticks: {
