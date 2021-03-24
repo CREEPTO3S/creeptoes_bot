@@ -173,9 +173,23 @@ bot.onText(/^\/chart/, (msg) => {
 });
 
 bot.onText(/^\/mockify/, (msg) => {
-  console.log(msg);
+  const chat = { ...msg.reply_to_message.chat };
+  delete chat.type;
+  console.table({ type: 'mockify', ...chat, text: msg.reply_to_message.text });
+
   bot.sendMessage(msg.chat.id, mockingcase(msg.reply_to_message.text, { random: true }), {
     reply_to_message_id: msg.reply_to_message.message_id,
   });
   bot.sendPhoto(msg.chat.id, 'https://camo.githubusercontent.com/3a3bd9d78deec2477321daecf7bbb48555d90507adbe08c95d673f5cc46dd23f/68747470733a2f2f696d67666c69702e636f6d2f732f6d656d652f4d6f636b696e672d53706f6e6765626f622e6a7067');
+});
+
+bot.onText(/^\/mickify/, (msg) => {
+  const chat = { ...msg.reply_to_message.chat };
+  delete chat.type;
+  console.table({ type: 'mickify', ...chat, text: msg.reply_to_message.text });
+
+  bot.sendMessage(msg.chat.id, msg.reply_to_message.text.replace(/[aAeEoOuU]/ig, 'i'), {
+    reply_to_message_id: msg.reply_to_message.message_id,
+  });
+  bot.sendPhoto(msg.chat.id, 'https://i.imgflip.com/si6e7.jpg');
 });
