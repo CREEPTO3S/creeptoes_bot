@@ -61,9 +61,13 @@ bot.onText(/^\/price/, (msg) => {
   const tokenList = msg.text.split(' ');
   tokenList.shift();
 
-  console.table({ ...msg.from, tokenList: tokenList.join(',') });
+  const tokenListLowerCase = tokenList.map((token) => token.toLowerCase());
 
-  client.mget(tokenList, (err, reply) => {
+  if (tokenListLowerCase.length === 0) return;
+
+  console.table({ type: 'price', ...msg.from, tokenList: tokenListLowerCase.join(',') });
+
+  client.mget(tokenListLowerCase, (err, reply) => {
     if (err) {
       console.error(err);
       return;
@@ -74,12 +78,14 @@ bot.onText(/^\/price/, (msg) => {
       .then((res) => res.json())
       .then((res) => {
         reply.forEach((id) => {
-          if (res[id]) {
-            messages.push(`${id}: ${formatter.format(res[id].usd)}`);
-          }
+          if (!res[id]) return;
+
+          messages.push(`${id}: ${formatter.format(res[id].usd)}`);
         });
 
-        bot.sendMessage(msg.chat.id, messages.join('\n'));
+        if (messages.length > 0) {
+          bot.sendMessage(msg.chat.id, messages.join('\n'));
+        }
       })
       .catch((error) => {
         console.error(err);
@@ -92,9 +98,11 @@ bot.onText(/^\/chart/, (msg) => {
   const tokenList = msg.text.split(' ');
   tokenList.shift();
 
-  const firstToken = tokenList.shift();
+  if (tokenList.length === 0) return;
 
-  console.table({ ...msg.from, token: firstToken });
+  const firstToken = tokenList.shift().toLowerCase();
+
+  console.table({ type: 'chart', ...msg.from, token: firstToken });
 
   client.get(firstToken, (err, reply) => {
     if (err) {
@@ -105,6 +113,8 @@ bot.onText(/^\/chart/, (msg) => {
     fetch(`${COINGECKO_ENDPOINT}/coins/${reply}/market_chart?vs_currency=usd&days=7&interval=daily`)
       .then((res) => res.json())
       .then(async (res) => {
+        if (!res.prices) return;
+
         const labels = res.prices.map((price) => new Date(price[0]).toLocaleString().split(',')[0]);
         const data = res.prices.map((price) => price[1]);
         const lineChart = new ChartJSImage().chart({
