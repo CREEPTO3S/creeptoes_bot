@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/CREEPTO3S/creeptoes_bot#readme",
   "dependencies": {
+    "@strdr4605/mockingcase": "^1.10.5",
     "bluebird": "^3.7.2",
     "chart.js-image": "^5.6.0",
     "cron": "^1.8.2",
