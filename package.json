@@ -18,6 +18,7 @@
   "homepage": "https://github.com/CREEPTO3S/creeptoes_bot#readme",
   "dependencies": {
     "bluebird": "^3.7.2",
+    "chart.js-image": "^5.6.0",
     "cron": "^1.8.2",
     "dotenv": "^8.2.0",
     "node-fetch": "^2.6.1",
