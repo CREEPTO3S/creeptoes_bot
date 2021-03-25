@@ -1,50 +1,23 @@
 require('dotenv').config();
 
-const ChartJSImage = require('chart.js-image');
 const mockingcase = require('@strdr4605/mockingcase');
 const { RedisAdapter, FetchAdapter } = require('./lib/adapters');
+const Initializer = require('./lib/init');
 const TelegramBot = require('./lib/telegram_bot');
-const Cron = require('./lib/cron');
-const { formatter } = require('./lib/helpers');
-
-const COINGECKO_ENDPOINT = 'https://api.coingecko.com/api/v3';
-const { TELEGRAM_TOKEN } = process.env;
+const ChartJS = require('./lib/chart-js');
+const {
+  formatter,
+  endpoints: {
+    COINGECKO_ENDPOINT,
+    MOCKIFY_IMG,
+    MICKIFY_IMG,
+  },
+} = require('./lib/helpers');
 
 const { client } = new RedisAdapter();
-const { bot } = new TelegramBot(TELEGRAM_TOKEN, { polling: true });
+const { bot } = new TelegramBot();
 
-// eslint-disable-next-line no-new
-new Cron('0 0 * * *', () => {
-  console.log('Caching token list started...');
-
-  FetchAdapter.fetch(`${COINGECKO_ENDPOINT}/coins/list`, (res) => {
-    const tokens = res.reduce((r, e) => {
-      r.push(e.symbol, e.id);
-      return r;
-    }, []);
-
-    client.mset(tokens, (err, reply) => {
-      if (err) {
-        console.error(err);
-        return;
-      }
-
-      const tokenExceptions = ['uni', 'uniswap'];
-      if (reply) {
-        client.mset(tokenExceptions, (err2, reply2) => {
-          if (err2) {
-            console.error(err);
-            return;
-          }
-
-          if (reply2) {
-            console.log('Caching token list finished!');
-          }
-        });
-      }
-    });
-  });
-});
+Initializer.init(client);
 
 bot.onText(/^\/price/, (msg) => {
   const tokenList = msg.text.split(' ');
@@ -100,51 +73,8 @@ bot.onText(/^\/chart/, (msg) => {
 
       const labels = res.prices.map((price) => new Date(price[0]).toLocaleString().split(',')[0].split('/').slice(0, 2).reverse().join('/'));
       const data = res.prices.map((price) => price[1]);
-      const lineChart = new ChartJSImage().chart({
-        type: 'line',
-        data: {
-          labels,
-          datasets: [{
-            label: 'Price',
-            lineTension: 0,
-            backgroundColor: 'rgba(255,+99,+132,+.5)',
-            borderColor: 'rgb(255,+99,+132)',
-            data,
-          }],
-        },
-        options: {
-          title: {
-            display: true,
-            text: `${reply.toUpperCase()} - 30 Days Chart`,
-          },
-          scales: {
-            xAxes: [
-              {
-                scaleLabel: {
-                  display: true,
-                  labelString: 'Date (dd/mm)',
-                },
-              },
-            ],
-            yAxes: [
-              {
-                ticks: {
-                  beginAtZero: false,
-                },
-                scaleLabel: {
-                  display: true,
-                  labelString: 'Price (USD)',
-                },
-              },
-            ],
-          },
-        },
-      })
-        .backgroundColor('white')
-        .width(1000)
-        .height(300);
 
-      const url = await lineChart.toURL();
+      const url = await ChartJS.chart(labels, data, reply).toURL();
       bot.sendPhoto(msg.chat.id, url);
     }, (error) => {
       bot.sendMessage(msg.chat.id, error.message);
@@ -162,7 +92,7 @@ bot.onText(/^\/mockify/, (msg) => {
   bot.sendMessage(msg.chat.id, mockingcase(msg.reply_to_message.text), {
     reply_to_message_id: msg.reply_to_message.message_id,
   });
-  bot.sendPhoto(msg.chat.id, 'https://camo.githubusercontent.com/3a3bd9d78deec2477321daecf7bbb48555d90507adbe08c95d673f5cc46dd23f/68747470733a2f2f696d67666c69702e636f6d2f732f6d656d652f4d6f636b696e672d53706f6e6765626f622e6a7067');
+  bot.sendPhoto(msg.chat.id, MOCKIFY_IMG);
 });
 
 bot.onText(/^\/mickify/, (msg) => {
@@ -175,5 +105,5 @@ bot.onText(/^\/mickify/, (msg) => {
   bot.sendMessage(msg.chat.id, msg.reply_to_message.text.replace(/[aAeEoOuU]/ig, 'i'), {
     reply_to_message_id: msg.reply_to_message.message_id,
   });
-  bot.sendPhoto(msg.chat.id, 'https://i.imgflip.com/si6e7.jpg');
+  bot.sendPhoto(msg.chat.id, MICKIFY_IMG);
 });
