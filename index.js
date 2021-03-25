@@ -53,15 +53,15 @@ bot.onText(/^\/price/, (msg) => {
     }
 
     const messages = [];
-    FetchAdapter.fetch(`${COINGECKO_ENDPOINT}/simple/price?ids=${reply.join(',')}&vs_currencies=usd`, (res) => {
+    FetchAdapter.fetch(`${COINGECKO_ENDPOINT}/simple/price?ids=${reply.join(',')}&vs_currencies=usd&include_market_cap=true`, (res) => {
       reply.forEach((id) => {
         if (!res[id]) return;
 
-        messages.push(`${id}: ${formatter.format(res[id].usd)}`);
+        messages.push(`*${id.toUpperCase().replace(/[_*`[]/ig, ' ')}*: \n\t\tPrice: ${formatter.format(res[id].usd)}\n\t\tMC: ${formatter.format(res[id].usd_market_cap)}`);
       });
 
       if (messages.length > 0) {
-        bot.sendMessage(msg.chat.id, messages.join('\n'));
+        bot.sendMessage(msg.chat.id, messages.join('\n'), { parse_mode: 'Markdown' });
       }
     }, (error) => {
       bot.sendMessage(msg.chat.id, error.message);
