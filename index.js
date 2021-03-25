@@ -143,6 +143,8 @@ bot.onText(/^\/chart/, (msg) => {
 });
 
 bot.onText(/^\/mockify/, (msg) => {
+  if (!msg.reply_to_message) return;
+
   const chat = { ...msg.reply_to_message.chat };
   delete chat.type;
   console.table({ type: 'mockify', ...chat, text: msg.reply_to_message.text });
@@ -154,6 +156,8 @@ bot.onText(/^\/mockify/, (msg) => {
 });
 
 bot.onText(/^\/mickify/, (msg) => {
+  if (!msg.reply_to_message) return;
+
   const chat = { ...msg.reply_to_message.chat };
   delete chat.type;
   console.table({ type: 'mickify', ...chat, text: msg.reply_to_message.text });
