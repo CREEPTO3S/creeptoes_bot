@@ -29,8 +29,18 @@ new Cron('0 0 * * *', () => {
         return;
       }
 
+      const tokenExceptions = ['uni', 'uniswap'];
       if (reply) {
-        console.log('Caching token list finished!');
+        client.mset(tokenExceptions, (err2, reply2) => {
+          if (err2) {
+            console.error(err);
+            return;
+          }
+
+          if (reply2) {
+            console.log('Caching token list finished!');
+          }
+        });
       }
     });
   });
@@ -105,7 +115,7 @@ bot.onText(/^\/chart/, (msg) => {
         options: {
           title: {
             display: true,
-            text: `${firstToken.toUpperCase()} - 30 Days Chart`,
+            text: `${reply.toUpperCase()} - 30 Days Chart`,
           },
           scales: {
             xAxes: [
