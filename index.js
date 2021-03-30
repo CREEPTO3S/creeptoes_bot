@@ -9,10 +9,13 @@ const {
   formatter,
   endpoints: {
     COINGECKO_ENDPOINT,
+    GIPHY_ENDPOINT,
     MOCKIFY_IMG,
     MICKIFY_IMG,
   },
 } = require('./lib/helpers');
+
+const { GIPHY_API_KEY } = process.env;
 
 const { client } = new RedisAdapter();
 const { bot } = new TelegramBot();
@@ -106,4 +109,21 @@ bot.onText(/^\/mickify/, (msg) => {
     reply_to_message_id: msg.reply_to_message.message_id,
   });
   bot.sendPhoto(msg.chat.id, MICKIFY_IMG);
+});
+
+bot.onText(/^\/gif/, (msg) => {
+  const q = msg.text.split(' ');
+  q.shift();
+
+  if (q.length === 0) return;
+
+  console.table({ type: 'gif', ...msg.from, q: q.join(' ') });
+
+  FetchAdapter.fetch(`${GIPHY_ENDPOINT}/search?api_key=${GIPHY_API_KEY}&q=${q.join(' ')}&limit=1&offset=0&rating=g&lang=en`, (res) => {
+    if (res.data.length !== 0) {
+      bot.sendAnimation(msg.chat.id, res.data[0].images.original.url);
+    }
+  }, (error) => {
+    bot.sendMessage(msg.chat.id, error.message);
+  });
 });
