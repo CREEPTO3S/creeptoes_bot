@@ -12,6 +12,7 @@ const {
     GIPHY_ENDPOINT,
     MOCKIFY_IMG,
     MICKIFY_IMG,
+    WEN_MOON_IMG,
   },
 } = require('./lib/helpers');
 
@@ -126,4 +127,8 @@ bot.onText(/^\/gif/, (msg) => {
   }, (error) => {
     bot.sendMessage(msg.chat.id, error.message);
   });
+});
+
+bot.onText(/^\/wenmoon/, (msg) => {
+  bot.sendPhoto(msg.chat.id, WEN_MOON_IMG);
 });
