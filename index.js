@@ -5,6 +5,7 @@ const { RedisAdapter, FetchAdapter } = require('./lib/adapters');
 const Initializer = require('./lib/init');
 const TelegramBot = require('./lib/telegram_bot');
 const ChartJS = require('./lib/chart-js');
+const NLP = require('./lib/nlp');
 const {
   formatter,
   endpoints: {
@@ -84,6 +85,22 @@ bot.onText(/^\/chart/, (msg) => {
       bot.sendMessage(msg.chat.id, error.message);
     });
   });
+});
+
+bot.onText(/^\/chat/, (msg) => {
+  const query = msg.text.split(' ');
+  query.shift();
+
+  if (query.length === 0) return;
+
+  console.table({ type: 'chat', ...msg.from, query: query.join(' ') });
+
+  (async () => {
+    await NLP.train();
+    NLP.save();
+    const response = await NLP.process('en', query.join(' '));
+    bot.sendMessage(msg.chat.id, response.answer);
+  })();
 });
 
 bot.onText(/^\/mockify/, (msg) => {

@@ -23,6 +23,7 @@
     "cron": "^1.8.2",
     "dotenv": "^8.2.0",
     "node-fetch": "^2.6.1",
+    "node-nlp": "^4.22.1",
     "node-telegram-bot-api": "^0.51.0",
     "redis": "^3.0.2"
   },
