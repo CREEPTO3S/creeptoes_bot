@@ -87,21 +87,21 @@ bot.onText(/^\/chart/, (msg) => {
   });
 });
 
-// bot.onText(/^\/chat/, (msg) => {
-  // const query = msg.text.split(' ');
-  // query.shift();
+bot.onText(/^\/chat/, (msg) => {
+  const query = msg.text.split(' ');
+  query.shift();
 
-  // if (query.length === 0) return;
+  if (query.length === 0) return;
 
-  // console.table({ type: 'chat', ...msg.from, query: query.join(' ') });
+  console.table({ type: 'chat', ...msg.from, query: query.join(' ') });
 
-  // (async () => {
-    // await NLP.train();
-    // NLP.save();
-    // const response = await NLP.process('en', query.join(' '));
-    // bot.sendMessage(msg.chat.id, response.answer);
-  // })();
-// });
+  (async () => {
+    await NLP.train();
+    NLP.save();
+    const response = await NLP.process('en', query.join(' '));
+    bot.sendMessage(msg.chat.id, response.answer);
+  })();
+});
 
 bot.onText(/^\/mockify/, (msg) => {
   if (!msg.reply_to_message) return;
